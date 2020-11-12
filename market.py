@@ -37,6 +37,10 @@ def handle_orders(orders):
         sagent.update_share(- delta_share)
         bagent.update_money(- delta_share * execution_price)
         sagent.update_money(delta_share * execution_price)
+        
+        # update last round order fulfilled
+        bagent.update_last_order = True
+        sagent.update_last_order = True
 
         if sc > bc:
             bi += 1

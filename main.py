@@ -26,12 +26,14 @@ if __name__ == "__main__":
         proposed_orders = []
         for agent in agent_list:
             order = agent.propose(prices)
+            agent.update_last_order(False)
             proposed_orders.append(order)
-        print(proposed_orders)
+        # print(proposed_orders)
+        # clean up last round order fulfilled bools
         orders, count, money = handle_orders(proposed_orders)
         # orders = cleanup_orders(orders)
         calculate_price(prices, count, money)
 
-
+    print(prices)
     agent_list[0].money -= 1
     print(agent_list[1].money)

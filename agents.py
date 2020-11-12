@@ -1,5 +1,4 @@
 from abc import abstractmethod
-from market import generate_order
 
 
 class Agent():
@@ -30,5 +29,20 @@ class Fool(Agent):
         else:
             return generate_order(prices[-1], 'sell', self, share)
 
+class Goodman(Agent):
+    def __init__(self, id):
+        super().__init__('goodman', id, money=20000000)
+    
+    def propose(self, prices):
+        share = 2
+        return generate_order(prices[-1], 'buy', self, share)
+
+
 def generate_agent(id):
-    return Fool(id)
+    if id % 2== 0:
+        return Fool(id)
+    else:
+        return Goodman(id)
+
+def generate_order(price, action, agent, share):
+    return {"price": price, "action": action, 'agent': agent, 'share': share}

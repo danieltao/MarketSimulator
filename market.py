@@ -4,10 +4,11 @@ from agents import Agent
 def handle_orders(orders):
     sell_pile, buy_pile = [], []
     for order in orders:
-        if order['action'] == "buy":
-            buy_pile.append(order)
-        else:
-            sell_pile.append(order)
+        if order:
+            if order['action'] == "buy":
+                buy_pile.append(order)
+            else:
+                sell_pile.append(order)
     buy_pile = sorted(buy_pile, key=lambda order: order['price'])
     sell_pile = sorted(sell_pile, key=lambda order: order['price'])
     bi, si = 0, 0
@@ -39,8 +40,8 @@ def handle_orders(orders):
         sagent.update_money(delta_share * execution_price)
         
         # update last round order fulfilled
-        bagent.update_last_order = True
-        sagent.update_last_order = True
+        bagent.update_last_order(True)
+        sagent.update_last_order(True)
 
         if sc > bc:
             bi += 1

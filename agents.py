@@ -42,6 +42,15 @@ class Goodman(Agent):
         if self.money >= prices[-1] * share:
             return generate_order(prices[-1], 'buy', self, share)
 
+class Bears(Agent):
+    def __init__(self, id):
+        super().__init__('bears', id)
+
+    def propose(self, prices):
+        share = 1
+        if self.shares > 0:
+            return generate_order(prices[-1], 'sell', self, share)
+
 
 def generate_agent(id):
     if id % 2== 0:

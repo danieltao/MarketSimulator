@@ -12,13 +12,15 @@ def handle_orders(orders):
     sell_pile = sorted(sell_pile, key=lambda order: order['price'])
     bi, si = 0, 0
     executed_order_count, executed_total_money = 0, 0
-    for si in range(len(sell_pile)):
+    while si < len(sell_pile):
         sell_order = sell_pile[si]
         sp, sc, sagent = sell_order["price"], sell_order['share'], sell_order['agent']
         buy_order = buy_pile[bi]
         bp, bc, bagent = buy_order["price"], buy_order['share'], buy_order['agent']
         while bp < sp:
             bi += 1
+            if bi == len(buy_pile):
+                return orders, executed_order_count, executed_total_money
             buy_order = buy_pile[bi]
             bp, bc, bagent = buy_order["price"], buy_order['share'], buy_order['agent']
         delta_share = min(sc, bc)
@@ -42,7 +44,8 @@ def handle_orders(orders):
             si += 1
         else:
             si, bi = si + 1, bi + 1
-
+        if bi == len(buy_pile):
+            return orders, executed_order_count, executed_total_money
     return orders, executed_order_count, executed_total_money
 
 def cleanup_orders(orders):

@@ -9,6 +9,7 @@ from agents import generate_agent
 # 5. if the order is not fulfilled in one round, the order will be cancelled for now
 # 6. if the order previous round is not fulfilled, agent should increase proposed buy price and decrease sell price 
 # 7. agent should have target price for some stock
+# 8. right now the money is always asserted to be above 0 (no debt)
 
 
 
@@ -26,10 +27,10 @@ if __name__ == "__main__":
         for agent in agent_list:
             order = agent.propose(prices)
             proposed_orders.append(order)
+        print(proposed_orders)
         orders, count, money = handle_orders(proposed_orders)
         # orders = cleanup_orders(orders)
         calculate_price(prices, count, money)
-        print(prices)
 
 
     agent_list[0].money -= 1

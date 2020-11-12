@@ -1,4 +1,5 @@
 from abc import abstractmethod
+import random
 
 
 class Agent():
@@ -13,9 +14,11 @@ class Agent():
         pass
 
     def update_money(self, delta):
+        assert(self.money >= 0)
         self.money += delta
     
     def update_share(self, delta):
+        assert(self.shares>=0)
         self.shares += delta
 
 class Fool(Agent):
@@ -24,18 +27,20 @@ class Fool(Agent):
     
     def propose(self, prices):
         share = 1
-        if prices[-2] < prices[-1]:
-            return generate_order(prices[-1], 'buy', self, share)
-        else:
-            return generate_order(prices[-1], 'sell', self, share)
+        rand_delta = random.random() * 5
+        if prices[-2] < prices[-1] and self.money>= (prices[-1] - rand_delta) * share:
+            return generate_order(prices[-1] - rand_delta, 'buy', self, share)
+        elif self.shares >= share:
+            return generate_order(prices[-1] + rand_delta, 'sell', self, share)
 
 class Goodman(Agent):
     def __init__(self, id):
-        super().__init__('goodman', id, money=20000000)
+        super().__init__('goodman', id, money=20000)
     
     def propose(self, prices):
         share = 2
-        return generate_order(prices[-1], 'buy', self, share)
+        if self.money >= prices[-1] * share:
+            return generate_order(prices[-1], 'buy', self, share)
 
 
 def generate_agent(id):

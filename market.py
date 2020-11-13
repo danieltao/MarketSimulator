@@ -11,6 +11,7 @@ def handle_orders(orders):
                 sell_pile.append(order)
     buy_pile = sorted(buy_pile, key=lambda order: order['price'])
     sell_pile = sorted(sell_pile, key=lambda order: order['price'])
+    highest_buy_price = buy_pile[-1]['price']
     bi, si = 0, 0
     executed_order_count, executed_total_money = 0, 0
     while si < len(sell_pile):
@@ -51,6 +52,7 @@ def handle_orders(orders):
             si, bi = si + 1, bi + 1
         if bi == len(buy_pile):
             return orders, executed_order_count, executed_total_money
+
     return orders, executed_order_count, executed_total_money
 
 def cleanup_orders(orders):

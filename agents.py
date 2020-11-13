@@ -26,13 +26,13 @@ class Agent():
         self.last_order_fulfilled = fulfilled
 
 
-class Fool(Agent):
+class Speculator(Agent):
     def __init__(self, id):
         super().__init__("fool", id)
     
     def propose(self, prices):
         share = 1
-        rand_delta = random.random() * 5
+        rand_delta = 5 + random.random() * 5
         base_price = prices[-1]
         if prices[-2] < base_price and self.money>= (base_price - rand_delta) * share:
             return generate_order_from_last(self.last_order_fulfilled, base_price, rand_delta, share, self, "buy")
@@ -46,7 +46,7 @@ class Goodman(Agent):
     def propose(self, prices):
         share = 1
         base_price = prices[-1]
-        rand_delta = random.random() * 5
+        rand_delta = 5 + random.random() * 5
         if self.money >= base_price * share:
             return generate_order_from_last(self.last_order_fulfilled, base_price, rand_delta, share, self, "buy")
 
@@ -62,7 +62,7 @@ class Bears(Agent):
 
 def generate_agent(id):
     if id % 2== 0:
-        return Fool(id)
+        return Speculator(id)
     else:
         return Goodman(id)
 

@@ -1,5 +1,6 @@
 from market import handle_orders, cleanup_orders, calculate_price
 from agents import generate_agent
+import matplotlib.pyplot as plt
 
 # potential improvements:
 # 1. limit order
@@ -14,6 +15,7 @@ from agents import generate_agent
 
 
 
+
 if __name__ == "__main__":    
     # generate agents
     agent_list = []
@@ -21,8 +23,8 @@ if __name__ == "__main__":
         agent_list.append(generate_agent(i))
 
     # start simulating
-    prices = [100, 111, 112, 114, 140]
-    for t in range(100):
+    prices = [110, 111, 112, 114, 120]
+    for t in range(10):
         proposed_orders = []
         for agent in agent_list:
             order = agent.propose(prices)
@@ -31,9 +33,13 @@ if __name__ == "__main__":
         # print(proposed_orders)
         # clean up last round order fulfilled bools
         orders, count, money = handle_orders(proposed_orders)
+        print(count)
         # orders = cleanup_orders(orders)
         calculate_price(prices, count, money)
 
     print(prices)
     agent_list[0].money -= 1
     print(agent_list[1].money)
+    # analysis
+    plt.plot(prices)
+    plt.show()

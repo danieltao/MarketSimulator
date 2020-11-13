@@ -9,9 +9,11 @@ def handle_orders(orders):
                 buy_pile.append(order)
             else:
                 sell_pile.append(order)
-    buy_pile = sorted(buy_pile, key=lambda order: order['price'])
+    buy_pile = sorted(buy_pile, key=lambda order: order['price'], reverse=True)
     sell_pile = sorted(sell_pile, key=lambda order: order['price'])
-    highest_buy_price = buy_pile[-1]['price']
+    if not buy_pile or not sell_pile:
+        return orders, 0, 0
+    # highest_buy_price = buy_pile[-1]['price']
     bi, si = 0, 0
     executed_order_count, executed_total_money = 0, 0
     while si < len(sell_pile):

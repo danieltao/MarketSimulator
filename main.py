@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 # 6. if the order previous round is not fulfilled, agent should increase proposed buy price and decrease sell price 
 # 7. agent should have target price for some stock
 # 8. right now the money is always asserted to be above 0 (no debt)
+# 9. right now every order is only 1 share
 
 
 
@@ -24,7 +25,7 @@ if __name__ == "__main__":
 
     # start simulating
     prices = [110, 111, 112, 114, 120]
-    for t in range(10):
+    for t in range(50):
         proposed_orders = []
         for agent in agent_list:
             order = agent.propose(prices)
@@ -33,7 +34,7 @@ if __name__ == "__main__":
         # print(proposed_orders)
         # clean up last round order fulfilled bools
         orders, count, money = handle_orders(proposed_orders)
-        print(count)
+        # print(count)
         # orders = cleanup_orders(orders)
         calculate_price(prices, count, money)
 

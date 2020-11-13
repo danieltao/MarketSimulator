@@ -3,7 +3,7 @@ import random
 
 
 class Agent():
-    def __init__(self, invest_type, id, money=10000, share=10):
+    def __init__(self, invest_type, id, money=1000, share=10):
         self.type = invest_type
         self.money = money
         self.shares = share
@@ -15,11 +15,11 @@ class Agent():
         pass
 
     def update_money(self, delta):
-        assert(self.money >= 0)
+        assert(self.money >= 0), self.type + str(self.money)
         self.money += delta
     
     def update_share(self, delta):
-        assert(self.shares>=0)
+        assert(self.shares>=0) , self.type
         self.shares += delta
     
     def update_last_order(self, fulfilled):
@@ -28,51 +28,60 @@ class Agent():
 
 class Speculator(Agent):
     def __init__(self, id):
-        super().__init__("fool", id)
+        super().__init__("Speculator", id)
     
     def propose(self, prices):
         share = 1
-        rand_delta = 5 + random.random() * 5
         base_price = prices[-1]
-        if prices[-2] < base_price and self.money>= (base_price - rand_delta) * share:
-            return generate_order_from_last(self.last_order_fulfilled, base_price, rand_delta, share, self, "buy")
+        delta = random.random() * 10
+        if prices[-2] < prices[-1] and self.money>= (base_price + delta) * share:
+            return generate_order(base_price, "buy", self, share, delta)
         elif self.shares >= share:
-            return generate_order_from_last(self.last_order_fulfilled, base_price, -rand_delta, share, self, "sell")
+            return generate_order(base_price, 'sell', self, share, delta)
 
-class Goodman(Agent):
+class Fundamental(Agent):
     def __init__(self, id):
-        super().__init__('goodman', id, money=20000)
+        super().__init__('Fundamental', id, money=1000)
+        self.target_price = 100 + 100 * random.random()
+        print(self.target_price)
     
     def propose(self, prices):
         share = 1
         base_price = prices[-1]
-        rand_delta = 5 + random.random() * 5
-        if self.money >= base_price * share:
-            return generate_order_from_last(self.last_order_fulfilled, base_price, rand_delta, share, self, "buy")
+        delta = random.random() * 10
+        # always buy when still has money and price is below target price
+        if self.money >= (base_price + delta) * share and (base_price + delta) < self.target_price:
+            return generate_order(base_price, "buy", self, share, delta)
+        # always sell all when price is greater than target
+        if self.shares > 0 and (base_price - delta) >= self.target_price:
+            return generate_order(base_price, 'sell', self, self.shares, delta)
 
 class Bears(Agent):
     def __init__(self, id):
-        super().__init__('bears', id)
+        super().__init__('bears', id, share=100)
 
     def propose(self, prices):
         share = 1
-        if self.shares > 0:
-            return generate_order(prices[-1], 'sell', self, share)
+        delta = random.random() * 10
+        if self.shares > 0:  
+            return generate_order(prices[-1], 'sell', self, share, delta)
 
 
 def generate_agent(id):
-    if id % 2== 0:
-        return Speculator(id)
+    if id % 10== 0:
+        return Bears(id)
+    elif id % 5 == 0:
+        return Fundamental(id)
     else:
-        return Goodman(id)
+        return Speculator(id)
 
-def generate_order(price, action, agent, share):
+def generate_order(price, action, agent, share, delta):
+    if action == "sell":
+        delta = -delta
+    if agent.last_order_fulfilled:
+        price -= delta
+    else:
+        price += delta
     return {"price": price, "action": action, 'agent': agent, 'share': share}
 
-
-def generate_order_from_last(last_order_fulfilled, base_price, delta, share, agent, buy_or_sell):
-    if last_order_fulfilled:
-        return generate_order(base_price - delta, buy_or_sell, agent, share)
-    else:
-        return generate_order(base_price + delta, buy_or_sell, agent, share)
 

@@ -24,7 +24,7 @@ if __name__ == "__main__":
         agent_list.append(generate_agent(i))
 
     # start simulating
-    prices = [110, 111, 112, 114, 120]
+    prices = [414, 423, 422, 423, 420]
     for t in range(50):
         proposed_orders = []
         for agent in agent_list:
@@ -44,4 +44,6 @@ if __name__ == "__main__":
     print(agent_list[1].money)
     # analysis
     plt.plot(prices)
+    plt.xlabel('time')
+    plt.ylabel('price')
     plt.show()

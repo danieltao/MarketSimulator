@@ -53,11 +53,12 @@ class Fundamental(Agent):
         base_price = prices[-1]
         delta = random.random() * 10
         # always buy when still has money and price is below target price
+        delta = 0
         if  (base_price + delta) < self.target_price:
             return generate_order(base_price, "buy", self, share, delta)
         # always sell all when price is greater than target
         if (base_price - delta) >= self.target_price:
-            return generate_order(base_price, 'sell', self, self.shares, delta)
+            return generate_order(base_price, 'sell', self, share, delta)
 
 class Bears(Agent):
     def __init__(self, id):
@@ -75,6 +76,7 @@ class Speculator(Agent):
     def propose(self, prices):
         share = 1
         delta = random.random() * 10
+        delta=0
         if prices[-2] >= prices[-1]:
             return generate_order(prices[-1] + delta, "buy", self, share, delta)
         if prices[-2] < prices[-1]:

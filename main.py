@@ -34,6 +34,7 @@ if __name__ == "__main__":
         # print(proposed_orders)
         # clean up last round order fulfilled bools
         orders, count, money = handle_orders(proposed_orders)
+        print(count)
         # print(count)
         # orders = cleanup_orders(orders)
         calculate_price(prices, count, money)

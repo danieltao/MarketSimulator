@@ -29,7 +29,6 @@ if __name__ == "__main__":
         proposed_orders = []
         for agent in agent_list:
             order = agent.propose(prices)
-            agent.update_last_order(False)
             proposed_orders.append(order)
         # print(proposed_orders)
         # clean up last round order fulfilled bools

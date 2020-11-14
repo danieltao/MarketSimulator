@@ -8,8 +8,8 @@ class Agent():
         self.money = money
         self.shares = share
         self.id = id
+        self.last_order_fulfilled = {}
         self.last_proposed_price = 0
-        self.last_order_fulfilled = False
 
     @abstractmethod
     def propose(self):
@@ -24,10 +24,14 @@ class Agent():
         self.shares += delta
     
     def update_last_order(self, fulfilled):
-        self.last_order_fulfilled = fulfilled
+        if not fulfilled:
+            self.last_order_fulfilled = {}
+        else:
+            self.last_order_fulfilled = fulfilled
 
     def update_last_proposed_price(self, price):
         self.last_proposed_price = price
+
 
 
 class Chaser(Agent):
@@ -76,7 +80,6 @@ class Speculator(Agent):
     def propose(self, prices):
         share = 1
         delta = random.random() * 10
-        delta=0
         if prices[-2] >= prices[-1]:
             return generate_order(prices[-1] + delta, "buy", self, share, delta)
         if prices[-2] < prices[-1]:
@@ -91,15 +94,19 @@ def generate_agent(id):
 def generate_order(price, action, agent, share, delta):
     if action == "sell":
         delta = -delta
-    # if agent.last_order_fulfilled:
-    #     price -= delta
-    # else:
-    #     price += delta
-    agent.update_last_proposed_price(price)
+    # if last order is not fulfilled and this turn is the same action
+    if action in agent.last_order_fulfilled and not agent.last_order_fulfilled[action]:
+        price = agent.last_proposed_price + delta
+
+    # avoid negative money and negative share
     if action=='buy':
         price = min(price, agent.money / share)
     else:
         share = min(agent.shares, share)
+
+    # update last proposed price and order
+    agent.update_last_proposed_price(price)
+    agent.update_last_order({action: False})
     return {"price": price, "action": action, 'agent': agent, 'share': share}
 
 

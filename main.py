@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 
 
 def calculate_utility(prices, agent):
-    start_utility = 1000 
+    start_utility = 10000 
     end_utility = agent.money 
     return end_utility - start_utility
 

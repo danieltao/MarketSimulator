@@ -3,7 +3,7 @@ import random
 
 
 class Agent():
-    def __init__(self, invest_type, id, money=1000, share=10):
+    def __init__(self, invest_type, id, money=10000, share=10):
         self.type = invest_type
         self.money = money
         self.shares = share
@@ -86,10 +86,13 @@ class Speculator(Agent):
             return generate_order(prices[-1], 'sell', self, share, delta)
 
 def generate_agent(id):
-    if id % 5 == 0:
-        return Chaser(id)
-    else:
-        return Speculator(id)
+    type_dict = {1: Chaser, 0: Speculator}
+    type_dice = random.randint(0,1)
+    # if id%2 ==0:
+    #     type_dice = 1
+    # else:
+    #     type_dice = 0
+    return type_dict[type_dice](id)
 
 def generate_order(price, action, agent, share, delta):
     if action == "sell":

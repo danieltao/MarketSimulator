@@ -12,9 +12,13 @@ import matplotlib.pyplot as plt
 # 7. agent should have target price for some stock
 # 8. right now the money is always asserted to be above 0 (no debt)
 # 9. right now every order is only 1 share
+# 10. trader --- liquidity
 
 
-
+def calculate_utility(prices, agent):
+    start_utility = 1000 
+    end_utility = agent.money 
+    return end_utility - start_utility
 
 
 if __name__ == "__main__":    
@@ -40,9 +44,22 @@ if __name__ == "__main__":
 
     print(prices)
     agent_list[0].money -= 1
-    print(agent_list[1].money)
     # analysis
     plt.plot(prices)
     plt.xlabel('time')
     plt.ylabel('price')
     plt.show()
+
+    utilities = {"Speculator":0, 'Chaser':0}
+    total_stock = 0
+    total_money = 0
+    for agent in agent_list:
+        utilities[agent.type] += calculate_utility(prices, agent)
+        print(calculate_utility(prices, agent))
+        total_stock += agent.shares
+        total_money += agent.money
+    
+    print(utilities)
+    print(total_stock)
+    print(total_money)
+

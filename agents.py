@@ -66,7 +66,7 @@ class Fundamental(Agent):
 
 class Bears(Agent):
     def __init__(self, id):
-        super().__init__('bears', id, share=100)
+        super().__init__('Bear', id, share=100)
 
     def propose(self, prices):
         share = 1
@@ -75,15 +75,15 @@ class Bears(Agent):
 
 class Speculator(Agent):
     def __init__(self, id):
-        super().__init__('speculator', id)
+        super().__init__('Speculator', id)
     
     def propose(self, prices):
         share = 1
         delta = random.random() * 10
         if prices[-2] >= prices[-1]:
-            return generate_order(prices[-1] + delta, "buy", self, share, delta)
+            return generate_order(prices[-1], "buy", self, share, delta)
         if prices[-2] < prices[-1]:
-            return generate_order(prices[-1] - delta, 'sell', self, share, delta)
+            return generate_order(prices[-1], 'sell', self, share, delta)
 
 def generate_agent(id):
     if id % 5 == 0:

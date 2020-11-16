@@ -7,12 +7,9 @@ import matplotlib.pyplot as plt
 # 2. more strategies
 # 3. change agent type. eg if lost 50k, switch from fool to conservative
 # 4. fractional share
-# 5. if the order is not fulfilled in one round, the order will be cancelled for now
-# 6. if the order previous round is not fulfilled, agent should increase proposed buy price and decrease sell price 
-# 7. agent should have target price for some stock
 # 8. right now the money is always asserted to be above 0 (no debt)
-# 9. right now every order is only 1 share
 # 10. trader --- liquidity
+# 11. partially imperfect
 
 
 def calculate_utility(prices, agent):
@@ -29,7 +26,7 @@ if __name__ == "__main__":
 
     # start simulating
     prices = [414, 423, 422, 423, 420]
-    for t in range(50):
+    for t in range(200):
         proposed_orders = []
         for agent in agent_list:
             order = agent.propose(prices)
@@ -41,6 +38,7 @@ if __name__ == "__main__":
         # print(count)
         # orders = cleanup_orders(orders)
         calculate_price(prices, count, money)
+        assert(prices[-1] > 0)
 
     print(prices)
     agent_list[0].money -= 1
@@ -50,7 +48,7 @@ if __name__ == "__main__":
     plt.ylabel('price')
     plt.show()
 
-    utilities = {"Speculator":0, 'Chaser':0}
+    utilities = {"Speculator":0, 'Chaser':0, 'Bear':0, 'Fundamental':0}
     total_stock = 0
     total_money = 0
     for agent in agent_list:

@@ -39,7 +39,7 @@ class Chaser(Agent):
         super().__init__("Chaser", id)
     
     def propose(self, prices):
-        share = 1
+        share = generate_share()
         base_price = prices[-1]
         delta = random.random() * 10
         if prices[-2] < prices[-1]:
@@ -48,28 +48,26 @@ class Chaser(Agent):
 
 class Fundamental(Agent):
     def __init__(self, id):
-        super().__init__('Fundamental', id, money=1000)
-        self.target_price = 100 + 100 * random.random()
-        print(self.target_price)
+        super().__init__('Fundamental', id)
+        self.target_price = 400 + 200 * random.random()
     
     def propose(self, prices):
-        share = 1
+        share = generate_share()
         base_price = prices[-1]
         delta = random.random() * 10
         # always buy when still has money and price is below target price
-        delta = 0
         if  (base_price + delta) < self.target_price:
             return generate_order(base_price, "buy", self, share, delta)
         # always sell all when price is greater than target
         if (base_price - delta) >= self.target_price:
             return generate_order(base_price, 'sell', self, share, delta)
 
-class Bears(Agent):
+class Bear(Agent):
     def __init__(self, id):
-        super().__init__('Bear', id, share=100)
+        super().__init__('Bear', id)
 
     def propose(self, prices):
-        share = 1
+        share = generate_share()
         delta = random.random() * 10
         return generate_order(prices[-1], 'sell', self, share, delta)
 
@@ -78,7 +76,7 @@ class Speculator(Agent):
         super().__init__('Speculator', id)
     
     def propose(self, prices):
-        share = 1
+        share = generate_share()
         delta = random.random() * 10
         if prices[-2] >= prices[-1]:
             return generate_order(prices[-1], "buy", self, share, delta)
@@ -86,8 +84,8 @@ class Speculator(Agent):
             return generate_order(prices[-1], 'sell', self, share, delta)
 
 def generate_agent(id):
-    type_dict = {1: Chaser, 0: Speculator}
-    type_dice = random.randint(0,1)
+    type_dict = {1: Chaser, 0: Speculator, 2:Fundamental, 3:Bear, 4: Speculator, 5: Chaser, 6:Speculator, 7:Chaser, 8: Chaser}
+    type_dice = random.randint(0,8)
     # if id%2 ==0:
     #     type_dice = 1
     # else:
@@ -95,6 +93,8 @@ def generate_agent(id):
     return type_dict[type_dice](id)
 
 def generate_order(price, action, agent, share, delta):
+    if share == 0:
+        return None
     if action == "sell":
         delta = -delta
     # if last order is not fulfilled and this turn is the same action
@@ -112,4 +112,6 @@ def generate_order(price, action, agent, share, delta):
     agent.update_last_order({action: False})
     return {"price": price, "action": action, 'agent': agent, 'share': share}
 
+def generate_share():
+    return random.randint(0,5)
 

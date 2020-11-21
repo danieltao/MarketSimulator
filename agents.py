@@ -16,8 +16,8 @@ class Agent():
         pass
 
     def update_money(self, delta):
-        assert(self.money >= 0), self.type + str(self.money)
         self.money += delta
+        assert(self.money >= 0), self.type + str(self.money) + "/" +str(self.last_proposed_price) + "/" +str(delta)
     
     def update_share(self, delta):
         assert(self.shares>=0) , self.type
@@ -39,7 +39,7 @@ class Chaser(Agent):
         super().__init__("Chaser", id)
     
     def propose(self, prices):
-        share = generate_share()
+        share = generate_share(self.shares)
         base_price = prices[-1]
         delta = random.random() * 10
         if prices[-2] < prices[-1]:
@@ -52,7 +52,7 @@ class Fundamental(Agent):
         self.target_price = 400 + 200 * random.random()
     
     def propose(self, prices):
-        share = generate_share()
+        share = generate_share(self.shares)
         base_price = prices[-1]
         delta = random.random() * 10
         # always buy when still has money and price is below target price
@@ -64,10 +64,10 @@ class Fundamental(Agent):
 
 class Bear(Agent):
     def __init__(self, id):
-        super().__init__('Bear', id)
+        super().__init__('Bear', id, share=5)
 
     def propose(self, prices):
-        share = generate_share()
+        share = generate_share(self.shares)
         delta = random.random() * 10
         return generate_order(prices[-1], 'sell', self, share, delta)
 
@@ -76,16 +76,15 @@ class Speculator(Agent):
         super().__init__('Speculator', id)
     
     def propose(self, prices):
-        share = generate_share()
+        share = generate_share(self.shares)
         delta = random.random() * 10
         if prices[-2] >= prices[-1]:
             return generate_order(prices[-1], "buy", self, share, delta)
         if prices[-2] < prices[-1]:
             return generate_order(prices[-1], 'sell', self, share, delta)
 
-def generate_agent(id):
-    type_dict = {1: Chaser, 0: Speculator, 2:Fundamental, 3:Bear, 4: Speculator, 5: Chaser, 6:Speculator, 7:Chaser, 8: Chaser}
-    type_dice = random.randint(0,8)
+def generate_agent(id, type_dict):
+    type_dice = random.randint(0,len(type_dict) - 1)
     # if id%2 ==0:
     #     type_dice = 1
     # else:
@@ -106,12 +105,12 @@ def generate_order(price, action, agent, share, delta):
         price = min(price, agent.money / share)
     else:
         share = min(agent.shares, share)
-
+    if price <=0:
+        return None
     # update last proposed price and order
     agent.update_last_proposed_price(price)
     agent.update_last_order({action: False})
     return {"price": price, "action": action, 'agent': agent, 'share': share}
 
-def generate_share():
-    return random.randint(0,5)
-
+def generate_share(max_shares):
+    return random.randint(0,max_shares)
